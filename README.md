@@ -1,2 +1,2 @@
-# Liliana Leonardo Projeto
+# Liliana Leandro Projeto
 Trabalho machine learning
