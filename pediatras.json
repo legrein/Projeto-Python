@@ -1,0 +1,17 @@
+[
+  {
+    "id": "P001",
+    "nome": "Dr. João Silva",
+    "salario": 3500.0
+  },
+  {
+    "id": "P002",
+    "nome": "Dra. Maria Santos",
+    "salario": 3800.0
+  },
+  {
+    "id": "P003",
+    "nome": "Dr. Carlos Oliveira",
+    "salario": 3200.0
+  }
+]

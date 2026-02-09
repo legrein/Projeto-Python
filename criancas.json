@@ -1,0 +1,17 @@
+[
+  {
+    "id": "C001",
+    "nome": "Ricardo Pereira",
+    "dataNascimento": "15/05/2018"
+  },
+  {
+    "id": "C002",
+    "nome": "Sofia Martins",
+    "dataNascimento": "20/11/2020"
+  },
+  {
+    "id": "C003",
+    "nome": "Tiago Ferreira",
+    "dataNascimento": "05/02/2022"
+  }
+]

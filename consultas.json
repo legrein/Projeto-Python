@@ -1,0 +1,23 @@
+[
+  {
+    "id": "CON001",
+    "data": "10/02/2026",
+    "crianca_id": "C001",
+    "pediatra_id": "P001",
+    "preco": 60.0
+  },
+  {
+    "id": "CON002",
+    "data": "11/02/2026",
+    "crianca_id": "C002",
+    "pediatra_id": "P002",
+    "preco": 75.0
+  },
+  {
+    "id": "CON003",
+    "data": "12/02/2026",
+    "crianca_id": "C003",
+    "pediatra_id": "P003",
+    "preco": 50.0
+  }
+]
