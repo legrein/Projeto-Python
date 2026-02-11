@@ -2,31 +2,29 @@ from file_utils import load, save
 from datetime import datetime
 import beaupy
 
-
 # =====================
 # Funções de utilidade
 # =====================
 
+def generateSequentialId(lista):
+    if not lista:
+        return 1
+    try:
+        last_id = max(int(item["id"]) for item in lista)
+        return last_id + 1
+    except:
+        return 1
+
 
 def ageCalculator(born_date_str):
-    # Datas no JSON vêm no formato "DD/MM/AAAA", ex: "15/05/2018"
-    formats = [
-        "%d/%m/%Y",
-        "%d-%m-%Y",
-        "%Y/%m/%d",
-        "%Y-%m-%d",
-    ]
+    formats = ["%d/%m/%Y", "%d-%m-%Y", "%Y/%m/%d", "%Y-%m-%d"]
     for fmt in formats:
         try:
             born_date = datetime.strptime(born_date_str, fmt)
             today = datetime.today()
             if born_date > today:
                 return "date no futuro"
-            age = (
-                today.year
-                - born_date.year
-                - ((today.month, today.day) < (born_date.month, born_date.day))
-            )
+            age = today.year - born_date.year - ((today.month, today.day) < (born_date.month, born_date.day))
             return age
         except ValueError:
             continue
@@ -35,7 +33,7 @@ def ageCalculator(born_date_str):
 
 def bornDateRequest():
     while True:
-        date = input("Data de Nascimento (DD/MM/AAAA ou AAAA-MM-DD): ")
+        date = input("Data de Nascimento (DD/MM/AAAA): ")
         result = ageCalculator(date)
         if isinstance(result, int):
             return date
@@ -46,9 +44,20 @@ def bornDateRequest():
 
 
 def findById(lista, id_):
-    id_=id_.strip().lower() #normalizar id (tirar espaços e converter tudo em minusculas)
+    try:
+        id_ = int(id_)
+    except:
+        return None
+
     for item in lista:
-        if item.get("id").strip().lower() == id_:
+        if int(item.get("id")) == id_:
+            return item
+    return None
+
+
+def findByContribuinte(lista, nif):
+    for item in lista:
+        if item.get("contribuinte") == nif:
             return item
     return None
 
@@ -65,143 +74,141 @@ def editItem(item, allowed_attributes):
     print("\n--- Editar Registo ---")
     for key, value in item.items():
         print(f"{key}: {value}")
-    while True:
-        attribute_tobe_edited = input(
-            "Qual o atributo que deseja editar (ou 'sair' para terminar)? "
-        ).strip()
-        if attribute_tobe_edited.lower() == "sair":
-            break
-        if attribute_tobe_edited in allowed_attributes:
-            new_value = input(f"Novo valor para {attribute_tobe_edited}: ")
-            if attribute_tobe_edited in ("salario", "preco"):
-                try:
-                    item[attribute_tobe_edited] = float(new_value)
-                except ValueError:
-                    print(
-                        "Valor inválido para este atributo. Por favor, insira um número."
-                    )
-            elif attribute_tobe_edited == "dataNascimento":
-                item[attribute_tobe_edited] = bornDateRequest()
-            else:
-                item[attribute_tobe_edited] = new_value
-            print(
-                f"Atributo '{attribute_tobe_edited}' foi atualizado para '{item[attribute_tobe_edited]}'."
-            )
-        else:
-            print("Atenção! Atributo inválido ou não permitido para edição.")
-    return item
 
+    while True:
+        attribute = input("Atributo a editar (ou 'sair'): ").strip()
+        if attribute.lower() == "sair":
+            break
+
+        if attribute not in allowed_attributes:
+            print("Atributo inválido.")
+            continue
+
+        new_value = input(f"Novo valor para {attribute}: ")
+
+        if attribute in ("salario", "preco", "price"):
+            try:
+                item[attribute] = float(new_value)
+            except:
+                print("Valor inválido.")
+        elif attribute == "dataNascimento":
+            item[attribute] = bornDateRequest()
+        else:
+            item[attribute] = new_value
+
+        print(f"Atributo '{attribute}' atualizado.")
+    return item
 
 # =====================
 # Funções de adição
 # =====================
 
-
 def addPediatrician():
     print("\nNovo pediatra\n")
-    pediatrician_id = input("ID: ")
+    pediatrician_id = generateSequentialId(pediatricianList)
     nome = input("Nome: ")
+    contribuinte = input("Contribuinte (NIF): ")
+
     while True:
         try:
             salario = float(input("Salário: "))
             break
         except ValueError:
-            print("Valor inválido. Introduza um número.")
-    return {"id": pediatrician_id, "nome": nome, "salario": salario}
+            print("Valor inválido.")
+
+    return {"id": pediatrician_id, "nome": nome, "contribuinte": contribuinte, "salario": salario}
 
 
 def addChild():
     print("\nNova Criança\n")
-    id_child = input("ID: ")
+    id_child = generateSequentialId(childList)
     nome = input("Nome: ")
+    contribuinte = input("Contribuinte (NIF): ")
     dataNascimento = bornDateRequest()
-    return {"id": id_child, "nome": nome, "dataNascimento": dataNascimento}
+
+    return {"id": id_child, "nome": nome, "contribuinte": contribuinte, "dataNascimento": dataNascimento}
 
 
 def addConsultation():
     print("\nNova consulta\n")
-    id_consultation = input("ID: ")
+    id_consultation = generateSequentialId(appointmentList)
 
-    # Aceitar vários formatos de data
-    formats = [
-        "%d/%m/%Y",
-        "%d-%m-%Y",
-        "%Y/%m/%d",
-        "%Y-%m-%d",
-    ]
+    formats = ["%d/%m/%Y", "%d-%m-%Y", "%Y/%m/%d", "%Y-%m-%d"]
 
     while True:
         data_input = input("Data (DD/MM/AAAA): ")
         valid = False
-
         for fmt in formats:
             try:
-                # Apenas validar — não converter permanentemente
                 datetime.strptime(data_input, fmt)
                 valid = True
                 break
-            except ValueError:
+            except:
                 pass
-
         if valid:
             break
-        else:
-            print("❌ Formato de data inválido. Tente novamente.")
+        print("❌ Data inválida.")
 
-    crianca_id = input("ID da Criança: ")
-    pediatra_id = input("ID do pediatra: ")
+    # Seleção por contribuinte
+    while True:
+        nif_child = input("Contribuinte da Criança: ")
+        child = findByContribuinte(childList, nif_child)
+        if child:
+            break
+        print("❌ Criança não encontrada. Verifique o NIF.")
+
+    while True:
+        nif_ped = input("Contribuinte do Pediatra: ")
+        pediatra = findByContribuinte(pediatricianList, nif_ped)
+        if pediatra:
+            break
+        print("❌ Pediatra não encontrado. Verifique o NIF.")
 
     while True:
         try:
             preco = float(input("Preço: "))
             break
-        except ValueError:
-            print("Valor inválido. Introduza um número.")
+        except:
+            print("Valor inválido.")
 
     return {
         "id": id_consultation,
-        "data": data_input,  # Mantém o formato original
-        "crianca_id": crianca_id,
-        "pediatra_id": pediatra_id,
-        "preco": preco,
+        "date": data_input,
+        "nif_child": nif_child,
+        "nif_pediatrician": nif_ped,
+        "price": preco
     }
 
 # =====================
-# Funções de impressão
+# Impressão
 # =====================
 
-
-def printPediatrician(pediatrician):
-    print(
-        f"ID: {pediatrician['id']}\tNome: {pediatrician['nome']}\tSalário: {pediatrician['salario']}€"
-    )
+def printPediatrician(p):
+    print(f"ID: {p['id']}\tNome: {p['nome']}\tNIF: {p['contribuinte']}\tSalário: {p['salario']}€")
 
 
-def printChild(child):
-    age = ageCalculator(child["dataNascimento"])
-    print(
-        f"ID: {child['id']}\tNome: {child['nome']}\tData Nascimento: {child['dataNascimento']}\tIdade: {age} anos"
-    )
+def printChild(c):
+    age = ageCalculator(c["dataNascimento"])
+    print(f"ID: {c['id']}\tNome: {c['nome']}\tNIF: {c['contribuinte']}\tData Nasc: {c['dataNascimento']}\tIdade: {age} anos")
 
 
-def printAppointment(appointment):
-    child = findById(childList, appointment["crianca_id"])
-    pediatra = findById(pediatricianList, appointment["pediatra_id"])
+def printAppointment(a):
+    child = findByContribuinte(childList, a["nif_child"])
+    pediatra = findByContribuinte(pediatricianList, a["nif_pediatrician"])
     nome_crianca = child["nome"] if child else "Desconhecida"
     nome_pediatra = pediatra["nome"] if pediatra else "Desconhecido"
+
     print(
         "Consulta\n"
-        f" Data: {appointment['data']}\n"
+        f" Data: {a['date']}\n"
         f" Pediatra: {nome_pediatra}\n"
         f" Criança: {nome_crianca}\n"
-        f" Preço: {appointment['preco']}€"
+        f" Preço: {a['price']}€"
     )
-
 
 # =====================
 # Listagem, pesquisa e edição
 # =====================
-
 
 def listPediatricians():
     print("\n--- Listagem de Pediatras ---")
@@ -213,26 +220,18 @@ def listPediatricians():
 
 
 def pediatricianSearch():
-    term = input("Indique o ID ou nome do pediatra que pretende procurar: ")
-    results = [
-        p
-        for p in pediatricianList
-        if term.lower() in p["nome"].lower() or term.lower() == p["id"].lower()
-    ]
-    if results:
-        print("\n--- Resultados da Pesquisa de Pediatras ---")
-        for p in results:
-            printPediatrician(p)
+    nif = input("Contribuinte (NIF) do pediatra: ")
+    pediatra = findByContribuinte(pediatricianList, nif)
+    if pediatra:
+        print("\n--- Dados do Pediatra ---")
+        printPediatrician(pediatra)
     else:
-        print("Nenhum pediatra encontrado com o ID ou nome fornecido.")
+        print("Nenhum pediatra encontrado com esse contribuinte.")
 
 
 def seePediatricianData():
-    pediatrician_id = input(
-        "Indique o ID do pediatra do qual pretende visualizar os dados: "
-    )
-    pediatrician_id=pediatrician_id.lower()
-    pediatra = findById(pediatricianList, pediatrician_id)
+    nif = input("Contribuinte (NIF) do pediatra: ")
+    pediatra = findByContribuinte(pediatricianList, nif)
     if pediatra:
         print("\n--- Dados do Pediatra ---")
         printPediatrician(pediatra)
@@ -241,12 +240,10 @@ def seePediatricianData():
 
 
 def editPediatrician():
-    pediatrician_id = input(
-        "Indique o ID do pediatra do qual pretende editar algum dado: "
-    )
-    pediatra = findById(pediatricianList, pediatrician_id)
+    nif = input("Contribuinte (NIF) do pediatra: ")
+    pediatra = findByContribuinte(pediatricianList, nif)
     if pediatra:
-        editItem(pediatra, ["nome", "salario"])
+        editItem(pediatra, ["nome", "contribuinte", "salario"])
         save(file_pediatrician, pediatricianList)
         print("Dados do pediatra atualizados com sucesso.")
     else:
@@ -254,8 +251,10 @@ def editPediatrician():
 
 
 def removePediatrician():
-    pediatrician_id = input("Indique o ID do pediatra que pretende remover: ")
-    if removeById(pediatricianList, pediatrician_id):
+    nif = input("Contribuinte (NIF) do pediatra: ")
+    pediatra = findByContribuinte(pediatricianList, nif)
+    if pediatra:
+        pediatricianList.remove(pediatra)
         save(file_pediatrician, pediatricianList)
         print("Pediatra removido com sucesso.")
     else:
@@ -272,21 +271,18 @@ def listChildren():
 
 
 def childSearch():
-    term = input("Indique o ID ou nome da criança que pretende pesquisar: ").lower()
-    results = [
-        c for c in childList if term.lower() in c["nome"].lower() or term.lower() == c["id"].lower()
-    ]
-    if results:
-        print("\n--- Resultados da Pesquisa de Crianças ---")
-        for c in results:
-            printChild(c)
+    nif = input("Contribuinte (NIF) da criança: ")
+    child = findByContribuinte(childList, nif)
+    if child:
+        print("\n--- Dados da Criança ---")
+        printChild(child)
     else:
-        print("O ID ou nome fornecido não corresponde a nenhuma criança.")
+        print("Nenhuma criança encontrada com esse contribuinte.")
 
 
 def seeChildData():
-    id_child = input("Indique o ID da Criança da qual pretende visualizar os dados: ")
-    child = findById(childList, id_child)
+    nif = input("Contribuinte (NIF) da criança: ")
+    child = findByContribuinte(childList, nif)
     if child:
         print("\n--- Dados da Criança ---")
         printChild(child)
@@ -295,10 +291,10 @@ def seeChildData():
 
 
 def editChild():
-    id_child = input("Indique o ID da Criança da qual pretende editar algum elemento: ")
-    child = findById(childList, id_child)
+    nif = input("Contribuinte (NIF) da criança: ")
+    child = findByContribuinte(childList, nif)
     if child:
-        editItem(child, ["nome", "dataNascimento"])
+        editItem(child, ["nome", "contribuinte", "dataNascimento"])
         save(file_children, childList)
         print("Dados atualizados com sucesso.")
     else:
@@ -306,8 +302,10 @@ def editChild():
 
 
 def removeChild():
-    id_child = input("Indique o ID da Criança que pretende remover: ")
-    if removeById(childList, id_child):
+    nif = input("Contribuinte (NIF) da criança: ")
+    child = findByContribuinte(childList, nif)
+    if child:
+        childList.remove(child)
         save(file_children, childList)
         print("Criança removida com sucesso.")
     else:
@@ -333,18 +331,10 @@ def listAppointments():
 
 
 def searchQueriesByDate():
-    search_date_input = input(
-        "Indique a data para a qual pretende pesquisar consultas (DD/MM/AAAA): "
-    ).strip()
+    search_date_input = input("Indique a data para a qual pretende pesquisar consultas (DD/MM/AAAA): ").strip()
 
-    formats = [
-        "%d/%m/%Y",
-        "%d-%m-%Y",
-        "%Y/%m/%d",
-        "%Y-%m-%d",
-    ]
+    formats = ["%d/%m/%Y", "%d-%m-%Y", "%Y/%m/%d", "%Y-%m-%d"]
 
-    # Converter a data introduzida pelo utilizador
     search_date = None
     for fmt in formats:
         try:
@@ -360,10 +350,9 @@ def searchQueriesByDate():
     queries_on_date = []
 
     for appoint in appointmentList:
-        appoint_date_str = appoint["data"]
+        appoint_date_str = appoint["date"]
         appoint_date = None
 
-        # Tentar converter a data da consulta
         for fmt in formats:
             try:
                 appoint_date = datetime.strptime(appoint_date_str, fmt)
@@ -371,11 +360,7 @@ def searchQueriesByDate():
             except ValueError:
                 pass
 
-        if appoint_date is None:
-            continue  # ignora datas inválidas no ficheiro
-
-        # Comparar datas (mesmo formato)
-        if appoint_date.date() == search_date.date():
+        if appoint_date and appoint_date.date() == search_date.date():
             queries_on_date.append(appoint)
 
     if queries_on_date:
@@ -385,45 +370,44 @@ def searchQueriesByDate():
     else:
         print(f"Nenhuma consulta agendada para {search_date_input}.")
 
+
 def childAppointmentHistory():
-    id_child = input(
-        "Indique o ID da Criança da qual pretende visualizar o histórico de consultas: "
-    )
+    nif = input("Contribuinte da Criança: ")
+    child = findByContribuinte(childList, nif)
+
+    if not child:
+        print("Criança não encontrada.")
+        return
+
     child_appointment = [
-        appoint for appoint in appointmentList if appoint["crianca_id"].lower() == id_child.lower()
+        appoint for appoint in appointmentList if appoint["nif_child"] == nif
     ]
+
     if child_appointment:
-        print(f"\n--- Histórico de Consultas da Criança (ID: {id_child}) ---")
+        print(f"\n--- Histórico de Consultas da Criança (NIF: {nif}) ---")
         for appoint in child_appointment:
             printAppointment(appoint)
     else:
-        print(
-            f"Nenhum histórico de consultas encontrado para a criança com ID {id_child}."
-        )
+        print(f"Nenhum histórico de consultas encontrado para a criança com NIF {nif}.")
 
 
 def nextPediatricianAppointment():
-    pediatrician_id = input(
-        "Indique o ID do pediatra para visualizar as próximas marcações: "
-    )
+    nif = input("Contribuinte do Pediatra: ")
+    pediatra = findByContribuinte(pediatricianList, nif)
 
-    formats = [
-        "%d/%m/%Y",
-        "%d-%m-%Y",
-        "%Y/%m/%d",
-        "%Y-%m-%d",
-    ]
+    if not pediatra:
+        print("Pediatra não encontrado.")
+        return
 
-    # Data atual
+    formats = ["%d/%m/%Y", "%d-%m-%Y", "%Y/%m/%d", "%Y-%m-%d"]
+
     today = datetime.now()
-
     nextAppointment = []
 
     for appoint in appointmentList:
-        data_str = appoint["data"]
+        data_str = appoint["date"]
         appointment_date = None
 
-        # Tentar todos os formatos possíveis
         for fmt in formats:
             try:
                 appointment_date = datetime.strptime(data_str, fmt)
@@ -431,26 +415,17 @@ def nextPediatricianAppointment():
             except ValueError:
                 pass
 
-        # Se não conseguiu converter a data, ignora
-        if appointment_date is None:
-            continue
-
-        # Verificar se pertence ao pediatra e é futura
-        if appoint["pediatra_id"].lower() == pediatrician_id.lower() and appointment_date >= today:
+        if appointment_date and appoint["nif_pediatrician"] == nif and appointment_date >= today:
             nextAppointment.append((appointment_date, appoint))
 
     if nextAppointment:
-        print(f"\n--- Próximas Marcações do Pediatra (ID: {pediatrician_id}) ---")
-
-        # Ordenar pela data convertida
+        print(f"\n--- Próximas Marcações do Pediatra (NIF: {nif}) ---")
         nextAppointment.sort(key=lambda x: x[0])
-
         for _, appoint in nextAppointment:
             printAppointment(appoint)
     else:
-        print(
-            f"Não existem marcações próximas para o pediatra com o ID {pediatrician_id}."
-        )
+        print(f"Não existem marcações próximas para o pediatra com o NIF {nif}.")
+
 
 def countRecords():
     print("\n--- Contagem de Registos ---")
@@ -463,14 +438,8 @@ def totalInvoicedBetweenDates():
     start_date_str = input("Data de início (DD/MM/AAAA): ")
     end_date_str = input("Data de fim (DD/MM/AAAA): ")
 
-    formats = [
-        "%d/%m/%Y",
-        "%d-%m-%Y",
-        "%Y/%m/%d",
-        "%Y-%m-%d",
-    ]
+    formats = ["%d/%m/%Y", "%d-%m-%Y", "%Y/%m/%d", "%Y-%m-%d"]
 
-    # Converter datas de início e fim
     start_date = None
     end_date = None
 
@@ -489,7 +458,7 @@ def totalInvoicedBetweenDates():
             pass
 
     if start_date is None or end_date is None:
-        print("Formato de data inválido. Utilize um dos formatos suportados.")
+        print("Formato de data inválido.")
         return
 
     total_invoiced = 0
@@ -499,16 +468,13 @@ def totalInvoicedBetweenDates():
 
         for fmt in formats:
             try:
-                consulta_date = datetime.strptime(consulta["data"], fmt)
+                consulta_date = datetime.strptime(consulta["date"], fmt)
                 break
             except ValueError:
                 pass
 
-        if consulta_date is None:
-            continue  # ignora datas inválidas no ficheiro
-
-        if start_date <= consulta_date <= end_date:
-            total_invoiced += consulta["preco"]
+        if consulta_date and start_date <= consulta_date <= end_date:
+            total_invoiced += consulta["price"]
 
     print(f"\n--- Total Faturado entre {start_date_str} e {end_date_str} ---")
     print(f"Total: {total_invoiced:.2f}€")
@@ -650,7 +616,6 @@ def systemManage():
         elif idx == 4:
             print("A sair do sistema. Até breve!")
             break
-
 
 # =========================
 # Configuração de ficheiros

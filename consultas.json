@@ -1,282 +1,42 @@
 [
-  {
-    "id": "CON001",
-    "date": "10/02/2026",
-    "child_id": "C001",
-    "pediatrician_id": "P001",
-    "price": 60.0
-  },
-  {
-    "id": "CON002",
-    "date": "11/02/2026",
-    "child_id": "C002",
-    "pediatrician_id": "P002",
-    "price": 75.0
-  },
-  {
-    "id": "CON003",
-    "date": "12/02/2026",
-    "child_id": "C003",
-    "pediatrician_id": "P003",
-    "price": 50.0
-  },
-  {
-    "id": "CON004",
-    "date": "13/02/2026",
-    "child_id": "C004",
-    "pediatrician_id": "P004",
-    "price": 65.0
-  },
-  {
-    "id": "CON005",
-    "date": "14/02/2026",
-    "child_id": "C005",
-    "pediatrician_id": "P005",
-    "price": 55.0
-  },
-  {
-    "id": "CON006",
-    "date": "15/02/2026",
-    "child_id": "C006",
-    "pediatrician_id": "P006",
-    "price": 70.0
-  },
-  {
-    "id": "CON007",
-    "date": "16/02/2026",
-    "child_id": "C007",
-    "pediatrician_id": "P007",
-    "price": 60.0
-  },
-  {
-    "id": "CON008",
-    "date": "17/02/2026",
-    "child_id": "C008",
-    "pediatrician_id": "P008",
-    "price": 75.0
-  },
-  {
-    "id": "CON009",
-    "date": "18/02/2026",
-    "child_id": "C009",
-    "pediatrician_id": "P009",
-    "price": 65.0
-  },
-  {
-    "id": "CON010",
-    "date": "19/02/2026",
-    "child_id": "C010",
-    "pediatrician_id": "P010",
-    "price": 58.0
-  },
-  {
-    "id": "CON011",
-    "date": "20/02/2026",
-    "child_id": "C011",
-    "pediatrician_id": "P011",
-    "price": 62.0
-  },
-  {
-    "id": "CON012",
-    "date": "21/02/2026",
-    "child_id": "C012",
-    "pediatrician_id": "P012",
-    "price": 72.0
-  },
-  {
-    "id": "CON013",
-    "date": "22/02/2026",
-    "child_id": "C013",
-    "pediatrician_id": "P013",
-    "price": 55.0
-  },
-  {
-    "id": "CON014",
-    "date": "23/02/2026",
-    "child_id": "C014",
-    "pediatrician_id": "P014",
-    "price": 80.0
-  },
-  {
-    "id": "CON015",
-    "date": "24/02/2026",
-    "child_id": "C015",
-    "pediatrician_id": "P015",
-    "price": 60.0
-  },
-  {
-    "id": "CON016",
-    "date": "25/02/2026",
-    "child_id": "C016",
-    "pediatrician_id": "P016",
-    "price": 75.0
-  },
-  {
-    "id": "CON017",
-    "date": "26/02/2026",
-    "child_id": "C017",
-    "pediatrician_id": "P017",
-    "price": 65.0
-  },
-  {
-    "id": "CON018",
-    "date": "27/02/2026",
-    "child_id": "C018",
-    "pediatrician_id": "P018",
-    "price": 70.0
-  },
-  {
-    "id": "CON019",
-    "date": "28/02/2026",
-    "child_id": "C019",
-    "pediatrician_id": "P019",
-    "price": 60.0
-  },
-  {
-    "id": "CON020",
-    "date": "01/03/2026",
-    "child_id": "C020",
-    "pediatrician_id": "P020",
-    "price": 78.0
-  },
-  {
-    "id": "CON021",
-    "date": "02/03/2026",
-    "child_id": "C021",
-    "pediatrician_id": "P021",
-    "price": 62.0
-  },
-  {
-    "id": "CON022",
-    "date": "03/03/2026",
-    "child_id": "C022",
-    "pediatrician_id": "P022",
-    "price": 72.0
-  },
-  {
-    "id": "CON023",
-    "date": "04/03/2026",
-    "child_id": "C001",
-    "pediatrician_id": "P002",
-    "price": 68.0
-  },
-  {
-    "id": "CON024",
-    "date": "05/03/2026",
-    "child_id": "C002",
-    "pediatrician_id": "P003",
-    "price": 55.0
-  },
-  {
-    "id": "CON025",
-    "date": "06/03/2026",
-    "child_id": "C003",
-    "pediatrician_id": "P004",
-    "price": 65.0
-  },
-  {
-    "id": "CON026",
-    "date": "07/03/2026",
-    "child_id": "C004",
-    "pediatrician_id": "P005",
-    "price": 70.0
-  },
-  {
-    "id": "CON027",
-    "date": "08/03/2026",
-    "child_id": "C005",
-    "pediatrician_id": "P006",
-    "price": 60.0
-  },
-  {
-    "id": "CON028",
-    "date": "09/03/2026",
-    "child_id": "C006",
-    "pediatrician_id": "P007",
-    "price": 75.0
-  },
-  {
-    "id": "CON029",
-    "date": "10/03/2026",
-    "child_id": "C007",
-    "pediatrician_id": "P008",
-    "price": 62.0
-  },
-  {
-    "id": "CON030",
-    "date": "11/03/2026",
-    "child_id": "C008",
-    "pediatrician_id": "P009",
-    "price": 58.0
-  },
-  {
-    "id": "CON031",
-    "date": "12/03/2026",
-    "child_id": "C009",
-    "pediatrician_id": "P010",
-    "price": 72.0
-  },
-  {
-    "id": "CON032",
-    "date": "13/03/2026",
-    "child_id": "C010",
-    "pediatrician_id": "P011",
-    "price": 65.0
-  },
-  {
-    "id": "CON033",
-    "date": "14/03/2026",
-    "child_id": "C011",
-    "pediatrician_id": "P012",
-    "price": 80.0
-  },
-  {
-    "id": "CON034",
-    "date": "15/03/2026",
-    "child_id": "C012",
-    "pediatrician_id": "P013",
-    "price": 60.0
-  },
-  {
-    "id": "CON035",
-    "date": "16/03/2026",
-    "child_id": "C013",
-    "pediatrician_id": "P014",
-    "price": 70.0
-  },
-  {
-    "id": "CON036",
-    "date": "17/03/2026",
-    "child_id": "C014",
-    "pediatrician_id": "P015",
-    "price": 65.0
-  },
-  {
-    "id": "CON037",
-    "date": "18/03/2026",
-    "child_id": "C015",
-    "pediatrician_id": "P016",
-    "price": 75.0
-  },
-  {
-    "id": "CON038",
-    "date": "19/03/2026",
-    "child_id": "C016",
-    "pediatrician_id": "P017",
-    "price": 62.0
-  },
-  {
-    "id": "CON039",
-    "date": "20/03/2026",
-    "child_id": "C017",
-    "pediatrician_id": "P018",
-    "price": 68.0
-  },
-  {
-    "id": "CON040",
-    "date": "21/03/2026",
-    "child_id": "C018",
-    "pediatrician_id": "P019",
-    "price": 72.0
-  }
+  { "id": 1, "date": "10/02/2026", "nif_child": "123456789", "nif_pediatrician": "111111111", "price": 60.0 },
+  { "id": 2, "date": "11/02/2026", "nif_child": "234567890", "nif_pediatrician": "222222222", "price": 75.0 },
+  { "id": 3, "date": "12/02/2026", "nif_child": "345678901", "nif_pediatrician": "333333333", "price": 50.0 },
+  { "id": 4, "date": "13/02/2026", "nif_child": "456789012", "nif_pediatrician": "444444444", "price": 65.0 },
+  { "id": 5, "date": "14/02/2026", "nif_child": "567890123", "nif_pediatrician": "555555555", "price": 55.0 },
+  { "id": 6, "date": "15/02/2026", "nif_child": "678901234", "nif_pediatrician": "666666666", "price": 70.0 },
+  { "id": 7, "date": "16/02/2026", "nif_child": "789012345", "nif_pediatrician": "777777777", "price": 60.0 },
+  { "id": 8, "date": "17/02/2026", "nif_child": "890123456", "nif_pediatrician": "888888888", "price": 75.0 },
+  { "id": 9, "date": "18/02/2026", "nif_child": "901234567", "nif_pediatrician": "999999999", "price": 65.0 },
+  { "id": 10, "date": "19/02/2026", "nif_child": "112233445", "nif_pediatrician": "101010101", "price": 58.0 },
+  { "id": 11, "date": "20/02/2026", "nif_child": "223344556", "nif_pediatrician": "202020202", "price": 62.0 },
+  { "id": 12, "date": "21/02/2026", "nif_child": "334455667", "nif_pediatrician": "303030303", "price": 72.0 },
+  { "id": 13, "date": "22/02/2026", "nif_child": "445566778", "nif_pediatrician": "404040404", "price": 55.0 },
+  { "id": 14, "date": "23/02/2026", "nif_child": "556677889", "nif_pediatrician": "505050505", "price": 80.0 },
+  { "id": 15, "date": "24/02/2026", "nif_child": "667788990", "nif_pediatrician": "606060606", "price": 60.0 },
+  { "id": 16, "date": "25/02/2026", "nif_child": "778899001", "nif_pediatrician": "707070707", "price": 75.0 },
+  { "id": 17, "date": "26/02/2026", "nif_child": "889900112", "nif_pediatrician": "808080808", "price": 65.0 },
+  { "id": 18, "date": "27/02/2026", "nif_child": "990011223", "nif_pediatrician": "909090909", "price": 70.0 },
+  { "id": 19, "date": "28/02/2026", "nif_child": "101112131", "nif_pediatrician": "112112112", "price": 60.0 },
+  { "id": 20, "date": "01/03/2026", "nif_child": "121314151", "nif_pediatrician": "223223223", "price": 78.0 },
+  { "id": 21, "date": "02/03/2026", "nif_child": "123456789", "nif_pediatrician": "334334334", "price": 62.0 },
+  { "id": 22, "date": "03/03/2026", "nif_child": "234567890", "nif_pediatrician": "445445445", "price": 72.0 },
+  { "id": 23, "date": "04/03/2026", "nif_child": "123456789", "nif_pediatrician": "222222222", "price": 68.0 },
+  { "id": 24, "date": "05/03/2026", "nif_child": "234567890", "nif_pediatrician": "333333333", "price": 55.0 },
+  { "id": 25, "date": "06/03/2026", "nif_child": "345678901", "nif_pediatrician": "444444444", "price": 65.0 },
+  { "id": 26, "date": "07/03/2026", "nif_child": "456789012", "nif_pediatrician": "555555555", "price": 70.0 },
+  { "id": 27, "date": "08/03/2026", "nif_child": "567890123", "nif_pediatrician": "666666666", "price": 60.0 },
+  { "id": 28, "date": "09/03/2026", "nif_child": "678901234", "nif_pediatrician": "777777777", "price": 75.0 },
+  { "id": 29, "date": "10/03/2026", "nif_child": "789012345", "nif_pediatrician": "888888888", "price": 62.0 },
+  { "id": 30, "date": "11/03/2026", "nif_child": "890123456", "nif_pediatrician": "999999999", "price": 58.0 },
+  { "id": 31, "date": "12/03/2026", "nif_child": "901234567", "nif_pediatrician": "101010101", "price": 72.0 },
+  { "id": 32, "date": "13/03/2026", "nif_child": "112233445", "nif_pediatrician": "202020202", "price": 65.0 },
+  { "id": 33, "date": "14/03/2026", "nif_child": "223344556", "nif_pediatrician": "303030303", "price": 80.0 },
+  { "id": 34, "date": "15/03/2026", "nif_child": "334455667", "nif_pediatrician": "404040404", "price": 60.0 },
+  { "id": 35, "date": "16/03/2026", "nif_child": "445566778", "nif_pediatrician": "505050505", "price": 70.0 },
+  { "id": 36, "date": "17/03/2026", "nif_child": "556677889", "nif_pediatrician": "606060606", "price": 65.0 },
+  { "id": 37, "date": "18/03/2026", "nif_child": "667788990", "nif_pediatrician": "707070707", "price": 75.0 },
+  { "id": 38, "date": "19/03/2026", "nif_child": "778899001", "nif_pediatrician": "808080808", "price": 62.0 },
+  { "id": 39, "date": "20/03/2026", "nif_child": "889900112", "nif_pediatrician": "909090909", "price": 68.0 },
+  { "id": 40, "date": "21/03/2026", "nif_child": "990011223", "nif_pediatrician": "112112112", "price": 72.0 }
 ]
