@@ -46,8 +46,9 @@ def bornDateRequest():
 
 
 def findById(lista, id_):
+    id_=id_.strip().lower() #normalizar id (tirar espaços e converter tudo em minusculas)
     for item in lista:
-        if item.get("id") == id_:
+        if item.get("id").strip().lower() == id_:
             return item
     return None
 
@@ -230,6 +231,7 @@ def seePediatricianData():
     pediatrician_id = input(
         "Indique o ID do pediatra do qual pretende visualizar os dados: "
     )
+    pediatrician_id=pediatrician_id.lower()
     pediatra = findById(pediatricianList, pediatrician_id)
     if pediatra:
         print("\n--- Dados do Pediatra ---")
