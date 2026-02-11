@@ -2,7 +2,7 @@
     {
         "id": "P001",
         "nome": "Dr. Jo\u00c3\u00a3o Silva",
-        "salario": 3500.0
+        "salario": 3600.0
     },
     {
         "id": "P002",
@@ -13,10 +13,5 @@
         "id": "P003",
         "nome": "Dr. Carlos Oliveira",
         "salario": 3200.0
-    },
-    {
-        "id": "1",
-        "nome": "leonor",
-        "salario": 1570.0
     }
 ]

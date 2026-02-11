@@ -21,10 +21,10 @@
         "preco": 50.0
     },
     {
-        "id": "c005",
-        "data": "01-05-2026",
-        "crianca_id": "c003",
+        "id": "CON005",
+        "data": "10-05-2026",
+        "crianca_id": "c002",
         "pediatra_id": "p002",
-        "preco": 65.0
+        "preco": 55.6
     }
 ]

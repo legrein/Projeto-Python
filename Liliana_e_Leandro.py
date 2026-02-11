@@ -333,19 +333,57 @@ def listAppointments():
 
 
 def searchQueriesByDate():
-    search_date = input(
+    search_date_input = input(
         "Indique a data para a qual pretende pesquisar consultas (DD/MM/AAAA): "
-    )
-    queries_on_date = [
-        appoint for appoint in appointmentList if appoint["data"] == search_date
+    ).strip()
+
+    formats = [
+        "%d/%m/%Y",
+        "%d-%m-%Y",
+        "%Y/%m/%d",
+        "%Y-%m-%d",
     ]
+
+    # Converter a data introduzida pelo utilizador
+    search_date = None
+    for fmt in formats:
+        try:
+            search_date = datetime.strptime(search_date_input, fmt)
+            break
+        except ValueError:
+            pass
+
+    if search_date is None:
+        print("Formato de data inválido.")
+        return
+
+    queries_on_date = []
+
+    for appoint in appointmentList:
+        appoint_date_str = appoint["data"]
+        appoint_date = None
+
+        # Tentar converter a data da consulta
+        for fmt in formats:
+            try:
+                appoint_date = datetime.strptime(appoint_date_str, fmt)
+                break
+            except ValueError:
+                pass
+
+        if appoint_date is None:
+            continue  # ignora datas inválidas no ficheiro
+
+        # Comparar datas (mesmo formato)
+        if appoint_date.date() == search_date.date():
+            queries_on_date.append(appoint)
+
     if queries_on_date:
-        print(f"\n--- Consultas em {search_date} ---")
+        print(f"\n--- Consultas em {search_date_input} ---")
         for appoint in queries_on_date:
             printAppointment(appoint)
     else:
-        print(f"Nenhuma consulta agendada para {search_date}.")
-
+        print(f"Nenhuma consulta agendada para {search_date_input}.")
 
 def childAppointmentHistory():
     id_child = input(
