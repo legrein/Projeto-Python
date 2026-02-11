@@ -1,7 +1,6 @@
 from file_utils import load, save
 from datetime import datetime
 import beaupy
-import re
 
 
 # =====================
@@ -10,15 +9,16 @@ import re
 
 
 def ageCalculator(born_date_str):
+    # Datas no JSON vêm no formato "DD/MM/AAAA", ex: "15/05/2018"
     formats = [
         "%d/%m/%Y",
         "%d-%m-%Y",
         "%Y/%m/%d",
         "%Y-%m-%d",
     ]
-    for format in formats:
+    for fmt in formats:
         try:
-            born_date = datetime.strptime(born_date_str, format)
+            born_date = datetime.strptime(born_date_str, fmt)
             today = datetime.today()
             if born_date > today:
                 return "date no futuro"
@@ -35,51 +35,51 @@ def ageCalculator(born_date_str):
 
 def bornDateRequest():
     while True:
-        date = input("date de Nascimento (DD/MM/AAAA ou AAAA-MM-DD): ")
+        date = input("Data de Nascimento (DD/MM/AAAA ou AAAA-MM-DD): ")
         result = ageCalculator(date)
         if isinstance(result, int):
             return date
         elif result == "date no futuro":
             print("❌ Verifique o ano de nascimento inserido.")
         else:
-            print("❌ data  inválida. Tente novamente.")
+            print("❌ Data inválida. Tente novamente.")
 
 
-def findById(list, id):
-    for item in list:
-        if item.get("id") == id:
+def findById(lista, id_):
+    for item in lista:
+        if item.get("id") == id_:
             return item
     return None
 
 
-def removeById(list, id):
-    item = findById(list, id)
+def removeById(lista, id_):
+    item = findById(lista, id_)
     if item:
-        list.remove(item)
+        lista.remove(item)
         return True
     return False
 
 
-def editItem(item, attribute):
-    print("\n--- Editar Item ---")
+def editItem(item, allowed_attributes):
+    print("\n--- Editar Registo ---")
     for key, value in item.items():
         print(f"{key}: {value}")
     while True:
         attribute_tobe_edited = input(
             "Qual o atributo que deseja editar (ou 'sair' para terminar)? "
-        ).lower()
-        if attribute_tobe_edited == "sair":
+        ).strip()
+        if attribute_tobe_edited.lower() == "sair":
             break
-        if attribute_tobe_edited in attribute:
+        if attribute_tobe_edited in allowed_attributes:
             new_value = input(f"Novo valor para {attribute_tobe_edited}: ")
-            if attribute_tobe_edited in ("wage", "price"):
+            if attribute_tobe_edited in ("salario", "preco"):
                 try:
                     item[attribute_tobe_edited] = float(new_value)
                 except ValueError:
                     print(
                         "Valor inválido para este atributo. Por favor, insira um número."
                     )
-            elif attribute_tobe_edited == "bornDate":
+            elif attribute_tobe_edited == "dataNascimento":
                 item[attribute_tobe_edited] = bornDateRequest()
             else:
                 item[attribute_tobe_edited] = new_value
@@ -99,73 +99,83 @@ def editItem(item, attribute):
 def addPediatrician():
     print("\nNovo pediatra\n")
     pediatrician_id = input("ID: ")
-    name = input("nome: ")
-    wage = float(input("Salário: "))
-    return {"id": pediatrician_id, "nome": name, "salário": wage}
+    nome = input("Nome: ")
+    while True:
+        try:
+            salario = float(input("Salário: "))
+            break
+        except ValueError:
+            print("Valor inválido. Introduza um número.")
+    return {"id": pediatrician_id, "nome": nome, "salario": salario}
 
 
 def addChild():
     print("\nNova Criança\n")
     id_child = input("ID: ")
-    name = input("nome: ")
-    bornDate = bornDateRequest()
-    return {"Id": id_child, "Nome": name, "Data de Nascimento": bornDate}
+    nome = input("Nome: ")
+    dataNascimento = bornDateRequest()
+    return {"id": id_child, "nome": nome, "dataNascimento": dataNascimento}
 
 
 def addConsultation():
-    print("\nNova consulta \n")
+    print("\nNova consulta\n")
     id_consultation = input("ID: ")
-    date = input("date (DD/MM/AAAA): ")
-    child_id = input("ID da Criança: ")
-    pediatrician_id = input("ID do pediatra: ")
-    price = float(input("Preço: "))
+    data = input("Data (DD/MM/AAAA): ")
+    crianca_id = input("ID da Criança: ")
+    pediatra_id = input("ID do pediatra: ")
+    while True:
+        try:
+            preco = float(input("Preço: "))
+            break
+        except ValueError:
+            print("Valor inválido. Introduza um número.")
     return {
-        "Id": id_consultation,
-        "Data": date,
-        "ID da Criança": child_id,
-        "ID do pediatra": pediatrician_id,
-        "Preço": price,
+        "id": id_consultation,
+        "data": data,
+        "crianca_id": crianca_id,
+        "pediatra_id": pediatra_id,
+        "preco": preco,
     }
 
 
 # =====================
-# Funções de impressão/Print
+# Funções de impressão
 # =====================
 
 
 def printPediatrician(pediatrician):
     print(
-        f"ID: {pediatrician['id']}\tNome: {pediatrician['name']}\tSalário: {pediatrician['wage']}€"
+        f"ID: {pediatrician['id']}\tNome: {pediatrician['nome']}\tSalário: {pediatrician['salario']}€"
     )
 
 
 def printChild(child):
-    age = ageCalculator(child["bornDate"])
+    age = ageCalculator(child["dataNascimento"])
     print(
-        f"ID: {child['id']}\tNome: {child['name']}\tData Nascimento: {child['bornDate']}\tIdade: {age} anos"
+        f"ID: {child['id']}\tNome: {child['nome']}\tData Nascimento: {child['dataNascimento']}\tIdade: {age} anos"
     )
 
 
 def printAppointment(appointment):
-    child = findById(childList, consulta["child_id"])
-    pediatra = findById(pediatricianList, consulta["pediatrician_id"])
-    name_child = child["name"] if child else "Desconhecida"
-    name_pediatrician = pediatra["name"] if pediatra else "Desconhecido"
+    child = findById(childList, appointment["crianca_id"])
+    pediatra = findById(pediatricianList, appointment["pediatra_id"])
+    nome_crianca = child["nome"] if child else "Desconhecida"
+    nome_pediatra = pediatra["nome"] if pediatra else "Desconhecido"
     print(
-        "appointment\n"
-        f" data : {appointment['date']}\n"
-        f" Pediatra: {name_pediatrician}\n"
-        f" Criança: {name_child}\n"
-        f" Preço: {appointment['price']}€"
+        "Consulta\n"
+        f" Data: {appointment['data']}\n"
+        f" Pediatra: {nome_pediatra}\n"
+        f" Criança: {nome_crianca}\n"
+        f" Preço: {appointment['preco']}€"
     )
 
 
 # =====================
-# Funções de listagem, pesquisa e edição
+# Listagem, pesquisa e edição
 # =====================
 
 
-def pediatricianList():
+def listPediatricians():
     print("\n--- Listagem de Pediatras ---")
     if pediatricianList:
         for p in pediatricianList:
@@ -179,7 +189,7 @@ def pediatricianSearch():
     results = [
         p
         for p in pediatricianList
-        if term.lower() in p["name"].lower() or term == p["id"]
+        if term.lower() in p["nome"].lower() or term == p["id"]
     ]
     if results:
         print("\n--- Resultados da Pesquisa de Pediatras ---")
@@ -196,7 +206,7 @@ def seePediatricianData():
     pediatra = findById(pediatricianList, pediatrician_id)
     if pediatra:
         print("\n--- Dados do Pediatra ---")
-        printPediatrician(pediatrician)
+        printPediatrician(pediatra)
     else:
         print("Pediatra não encontrado.")
 
@@ -207,9 +217,9 @@ def editPediatrician():
     )
     pediatra = findById(pediatricianList, pediatrician_id)
     if pediatra:
-        editItem(pediatrician, ["name", "wage"])
+        editItem(pediatra, ["nome", "salario"])
         save(file_pediatrician, pediatricianList)
-        print("Dado do pediatra atualizado com sucesso.")
+        print("Dados do pediatra atualizados com sucesso.")
     else:
         print("Pediatra não encontrado.")
 
@@ -235,14 +245,14 @@ def listChildren():
 def childSearch():
     term = input("Indique o ID ou nome da criança que pretende pesquisar: ")
     results = [
-        c for c in childList if term.lower() in c["name"].lower() or term == c["id"]
+        c for c in childList if term.lower() in c["nome"].lower() or term == c["id"]
     ]
     if results:
         print("\n--- Resultados da Pesquisa de Crianças ---")
         for c in results:
             printChild(c)
     else:
-        print("O ID ou nome fornecido não corresponde a Nenhuma criança.")
+        print("O ID ou nome fornecido não corresponde a nenhuma criança.")
 
 
 def seeChildData():
@@ -259,9 +269,9 @@ def editChild():
     id_child = input("Indique o ID da Criança da qual pretende editar algum elemento: ")
     child = findById(childList, id_child)
     if child:
-        editItem(child, ["name", "bornDate"])
+        editItem(child, ["nome", "dataNascimento"])
         save(file_children, childList)
-        print("Dado atualiada com sucesso.")
+        print("Dados atualizados com sucesso.")
     else:
         print("Criança não encontrada.")
 
@@ -284,7 +294,7 @@ def cancelAppointment():
         print("Consulta não encontrada.")
 
 
-def appointmentList():
+def listAppointments():
     print("\n--- Listagem de Consultas ---")
     if appointmentList:
         for appoint in appointmentList:
@@ -295,10 +305,10 @@ def appointmentList():
 
 def searchQueriesByDate():
     search_date = input(
-        "Indique a data para qual pretende pesquisar consultas (DD/MM/AAAA): "
+        "Indique a data para a qual pretende pesquisar consultas (DD/MM/AAAA): "
     )
     queries_on_date = [
-        appoint for appoint in appointmentList if appoint["date"] == search_date
+        appoint for appoint in appointmentList if appoint["data"] == search_date
     ]
     if queries_on_date:
         print(f"\n--- Consultas em {search_date} ---")
@@ -313,7 +323,7 @@ def childAppointmentHistory():
         "Indique o ID da Criança da qual pretende visualizar o histórico de consultas: "
     )
     child_appointment = [
-        appoint for appoint in appointmentList if appoint["child_id"] == id_child
+        appoint for appoint in appointmentList if appoint["crianca_id"] == id_child
     ]
     if child_appointment:
         print(f"\n--- Histórico de Consultas da Criança (ID: {id_child}) ---")
@@ -327,16 +337,16 @@ def childAppointmentHistory():
 
 def nextPediatricianAppointment():
     pediatrician_id = input(
-        "Indique o ID do pediatria para visualizar as próximas marcações: "
+        "Indique o ID do pediatra para visualizar as próximas marcações: "
     )
     today = datetime.now().strftime("%d/%m/%Y")
     nextAppointment = []
     for appoint in appointmentList:
         try:
-            appointment_date = datetime.strptime(appoint["date"], "%d/%m/%Y")
+            appointment_date = datetime.strptime(appoint["data"], "%d/%m/%Y")
             today_date = datetime.strptime(today, "%d/%m/%Y")
             if (
-                appoint["pediatrician_id"] == pediatrician_id
+                appoint["pediatra_id"] == pediatrician_id
                 and appointment_date >= today_date
             ):
                 nextAppointment.append(appoint)
@@ -345,12 +355,12 @@ def nextPediatricianAppointment():
 
     if nextAppointment:
         print(f"\n--- Próximas Marcações do Pediatra (ID: {pediatrician_id}) ---")
-        nextAppointment.sort(key=lambda x: datetime.strptime(x["date"], "%d/%m/%Y"))
+        nextAppointment.sort(key=lambda x: datetime.strptime(x["data"], "%d/%m/%Y"))
         for appoint in nextAppointment:
             printAppointment(appoint)
     else:
         print(
-            f"Não existe marcações próxima para o pediatra com o ID {pediatrician_id}."
+            f"Não existem marcações próximas para o pediatra com o ID {pediatrician_id}."
         )
 
 
@@ -375,9 +385,9 @@ def totalInvoicedBetweenDates():
     total_invoiced = 0
     for consulta in appointmentList:
         try:
-            appointment_date = datetime.strptime(appointment["date"], "%d/%m/%Y")
+            appointment_date = datetime.strptime(consulta["data"], "%d/%m/%Y")
             if start_date <= appointment_date <= end_date:
-                total_invoiced += consulta["price"]
+                total_invoiced += consulta["preco"]
         except ValueError:
             continue
 
@@ -415,7 +425,7 @@ def pediatricianManagementMenu():
             pediatricianList.append(addPediatrician())
             save(file_pediatrician, pediatricianList)
         elif idx == 1:
-            pediatricianList()
+            listPediatricians()
         elif idx == 2:
             pediatricianSearch()
         elif idx == 3:
@@ -460,10 +470,10 @@ def childrenManagementMenu():
 
 def appointmentsManagementMenu():
     options = [
-        "Marcar consulta ",
-        "Desmarcar consulta ",
+        "Marcar consulta",
+        "Desmarcar consulta",
         "Listar consultas",
-        "Pesquisar Consultas por data ",
+        "Pesquisar Consultas por data",
         "Histórico de consultas da criança",
         "Próximas marcações do pediatra",
         "Voltar",
@@ -477,7 +487,7 @@ def appointmentsManagementMenu():
         elif idx == 1:
             cancelAppointment()
         elif idx == 2:
-            appointmentList()
+            listAppointments()
         elif idx == 3:
             searchQueriesByDate()
         elif idx == 4:
