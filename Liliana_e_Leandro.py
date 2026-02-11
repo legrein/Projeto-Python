@@ -120,23 +120,50 @@ def addChild():
 def addConsultation():
     print("\nNova consulta\n")
     id_consultation = input("ID: ")
-    data = input("Data (DD/MM/AAAA): ")
+
+    # Aceitar vários formatos de data
+    formats = [
+        "%d/%m/%Y",
+        "%d-%m-%Y",
+        "%Y/%m/%d",
+        "%Y-%m-%d",
+    ]
+
+    while True:
+        data_input = input("Data (DD/MM/AAAA): ")
+        valid = False
+
+        for fmt in formats:
+            try:
+                # Apenas validar — não converter permanentemente
+                datetime.strptime(data_input, fmt)
+                valid = True
+                break
+            except ValueError:
+                pass
+
+        if valid:
+            break
+        else:
+            print("❌ Formato de data inválido. Tente novamente.")
+
     crianca_id = input("ID da Criança: ")
     pediatra_id = input("ID do pediatra: ")
+
     while True:
         try:
             preco = float(input("Preço: "))
             break
         except ValueError:
             print("Valor inválido. Introduza um número.")
+
     return {
         "id": id_consultation,
-        "data": data,
+        "data": data_input,  # Mantém o formato original
         "crianca_id": crianca_id,
         "pediatra_id": pediatra_id,
         "preco": preco,
     }
-
 
 # =====================
 # Funções de impressão
@@ -189,7 +216,7 @@ def pediatricianSearch():
     results = [
         p
         for p in pediatricianList
-        if term.lower() in p["nome"].lower() or term == p["id"]
+        if term.lower() in p["nome"].lower() or term.lower() == p["id"].lower()
     ]
     if results:
         print("\n--- Resultados da Pesquisa de Pediatras ---")
@@ -243,9 +270,9 @@ def listChildren():
 
 
 def childSearch():
-    term = input("Indique o ID ou nome da criança que pretende pesquisar: ")
+    term = input("Indique o ID ou nome da criança que pretende pesquisar: ").lower()
     results = [
-        c for c in childList if term.lower() in c["nome"].lower() or term == c["id"]
+        c for c in childList if term.lower() in c["nome"].lower() or term.lower() == c["id"].lower()
     ]
     if results:
         print("\n--- Resultados da Pesquisa de Crianças ---")
@@ -288,7 +315,7 @@ def removeChild():
 def cancelAppointment():
     id_consultation = input("Indique o ID da consulta que pretende desmarcar: ")
     if removeById(appointmentList, id_consultation):
-        save(file_appointiments, appointmentList)
+        save(file_appointments, appointmentList)
         print("Consulta desmarcada com sucesso.")
     else:
         print("Consulta não encontrada.")
@@ -323,7 +350,7 @@ def childAppointmentHistory():
         "Indique o ID da Criança da qual pretende visualizar o histórico de consultas: "
     )
     child_appointment = [
-        appoint for appoint in appointmentList if appoint["crianca_id"] == id_child
+        appoint for appoint in appointmentList if appoint["crianca_id"].lower() == id_child.lower()
     ]
     if child_appointment:
         print(f"\n--- Histórico de Consultas da Criança (ID: {id_child}) ---")
@@ -339,30 +366,51 @@ def nextPediatricianAppointment():
     pediatrician_id = input(
         "Indique o ID do pediatra para visualizar as próximas marcações: "
     )
-    today = datetime.now().strftime("%d/%m/%Y")
+
+    formats = [
+        "%d/%m/%Y",
+        "%d-%m-%Y",
+        "%Y/%m/%d",
+        "%Y-%m-%d",
+    ]
+
+    # Data atual
+    today = datetime.now()
+
     nextAppointment = []
+
     for appoint in appointmentList:
-        try:
-            appointment_date = datetime.strptime(appoint["data"], "%d/%m/%Y")
-            today_date = datetime.strptime(today, "%d/%m/%Y")
-            if (
-                appoint["pediatra_id"] == pediatrician_id
-                and appointment_date >= today_date
-            ):
-                nextAppointment.append(appoint)
-        except ValueError:
+        data_str = appoint["data"]
+        appointment_date = None
+
+        # Tentar todos os formatos possíveis
+        for fmt in formats:
+            try:
+                appointment_date = datetime.strptime(data_str, fmt)
+                break
+            except ValueError:
+                pass
+
+        # Se não conseguiu converter a data, ignora
+        if appointment_date is None:
             continue
+
+        # Verificar se pertence ao pediatra e é futura
+        if appoint["pediatra_id"].lower() == pediatrician_id.lower() and appointment_date >= today:
+            nextAppointment.append((appointment_date, appoint))
 
     if nextAppointment:
         print(f"\n--- Próximas Marcações do Pediatra (ID: {pediatrician_id}) ---")
-        nextAppointment.sort(key=lambda x: datetime.strptime(x["data"], "%d/%m/%Y"))
-        for appoint in nextAppointment:
+
+        # Ordenar pela data convertida
+        nextAppointment.sort(key=lambda x: x[0])
+
+        for _, appoint in nextAppointment:
             printAppointment(appoint)
     else:
         print(
             f"Não existem marcações próximas para o pediatra com o ID {pediatrician_id}."
         )
-
 
 def countRecords():
     print("\n--- Contagem de Registos ---")
@@ -375,30 +423,59 @@ def totalInvoicedBetweenDates():
     start_date_str = input("Data de início (DD/MM/AAAA): ")
     end_date_str = input("Data de fim (DD/MM/AAAA): ")
 
-    try:
-        start_date = datetime.strptime(start_date_str, "%d/%m/%Y")
-        end_date = datetime.strptime(end_date_str, "%d/%m/%Y")
-    except ValueError:
-        print("Formato de data inválido. Use DD/MM/AAAA.")
+    formats = [
+        "%d/%m/%Y",
+        "%d-%m-%Y",
+        "%Y/%m/%d",
+        "%Y-%m-%d",
+    ]
+
+    # Converter datas de início e fim
+    start_date = None
+    end_date = None
+
+    for fmt in formats:
+        try:
+            start_date = datetime.strptime(start_date_str, fmt)
+            break
+        except ValueError:
+            pass
+
+    for fmt in formats:
+        try:
+            end_date = datetime.strptime(end_date_str, fmt)
+            break
+        except ValueError:
+            pass
+
+    if start_date is None or end_date is None:
+        print("Formato de data inválido. Utilize um dos formatos suportados.")
         return
 
     total_invoiced = 0
+
     for consulta in appointmentList:
-        try:
-            appointment_date = datetime.strptime(consulta["data"], "%d/%m/%Y")
-            if start_date <= appointment_date <= end_date:
-                total_invoiced += consulta["preco"]
-        except ValueError:
-            continue
+        consulta_date = None
+
+        for fmt in formats:
+            try:
+                consulta_date = datetime.strptime(consulta["data"], fmt)
+                break
+            except ValueError:
+                pass
+
+        if consulta_date is None:
+            continue  # ignora datas inválidas no ficheiro
+
+        if start_date <= consulta_date <= end_date:
+            total_invoiced += consulta["preco"]
 
     print(f"\n--- Total Faturado entre {start_date_str} e {end_date_str} ---")
     print(f"Total: {total_invoiced:.2f}€")
 
-
 # =========================
 # Helpers de Menu com Beaupy
 # =========================
-
 
 def select_option(title, options, cursor="⇒", cursor_style="yellow"):
     print(f"\n--- {title} ---")
@@ -483,7 +560,7 @@ def appointmentsManagementMenu():
         idx = select_option("Gestão de Consultas", options)
         if idx == 0:
             appointmentList.append(addConsultation())
-            save(file_appointiments, appointmentList)
+            save(file_appointments, appointmentList)
         elif idx == 1:
             cancelAppointment()
         elif idx == 2:
@@ -541,12 +618,12 @@ def systemManage():
 
 file_pediatrician = "json/pediatras.json"
 file_children = "json/criancas.json"
-file_appointiments = "json/consultas.json"
+file_appointments = "json/consultas.json"
 
 # Carregamento inicial das listas
 pediatricianList = load(file_pediatrician)
 childList = load(file_children)
-appointmentList = load(file_appointiments)
+appointmentList = load(file_appointments)
 
 if __name__ == "__main__":
     systemManage()
